@@ -90,5 +90,4 @@ async def _leave(ctx):
     await ctx.message.delete()  # deleting command message
     await ctx.voice_client.disconnect()  # disconnect bot voice_client
 
-bot.run(
-    "ODMyMTU4Nzk4OTQzNjE3MDQ0.YHfuRg.a0DYLbN0NGWzV_UcoCpN9sPejH0")  # connecting to discord with a token and starting the bot
+bot.run("")  # connecting to discord with a token and starting the bot
