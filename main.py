@@ -1,22 +1,36 @@
 import discord
-import requests
-from colorama import Fore
+from discord.ext import tasks
 from discord import FFmpegPCMAudio
 from discord.ext import commands
 from discord.utils import get
+from colorama import Fore
+
+from ng_api import *
+from utils import *
 
 bot = commands.Bot(command_prefix="ong!", description="A remake of NGRadio#4551 in Open-Source by JMimosa#2495")
-
 bot.remove_command("help")
 
 
-# Event
+# Task
+@static_vars(last_title=getRadioApiJSON()['now_playing']['song']['title'])
+@tasks.loop(seconds=25)  # repeat after every 25 seconds
+async def updateStatus():
+    source = getRadioApiJSON()
+    current_title = source['now_playing']['song']['title']
+    if updateStatus.last_title != current_title:  # song has changed
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,
+                                                            name=f"Listening {source['now_playing']['song']['title']} by {source['now_playing']['song']['artist']}"))
+        updateStatus.last_title = current_title
 
+
+# Event
 @bot.event
 async def on_ready():
+    updateStatus.start()
     print(Fore.GREEN + "[+] Bot is now started and ready")
     print(Fore.GREEN + '[+] Logged in as:'
-                       f'\n [-->] {bot.user.name}#{bot.user.discriminator} -> {bot.user.id}')  # printing into the console some information about the bot
+                       f'\n [-->] {bot.user.name}#{bot.user.discriminator} -> {bot.user.id}')  # printing into the console some importations about the bot
 
 
 @bot.command(pass_context=True, name='help', aliases=['h'])
@@ -75,10 +89,5 @@ async def _play(ctx):
 async def _leave(ctx):
     await ctx.message.delete()  # deleting command message
     await ctx.voice_client.disconnect()  # disconnect bot voice_client
-
-
-def getRadioApiJSON():
-    return requests.get("https://apiv2.nationsglory.fr/radio/api.json").json()  # parsing api.json and returning content as JSON
-
 
 bot.run("")  # connecting to discord with a token and starting the bot
