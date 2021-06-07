@@ -30,7 +30,7 @@ async def on_ready():
     updateStatus.start()
     print(Fore.GREEN + "[+] Bot is now started and ready")
     print(Fore.GREEN + '[+] Logged in as:'
-                       f'\n [-->] {bot.user.name}#{bot.user.discriminator} -> {bot.user.id}')  # printing into the console some importations about the bot
+                       f'\n [-->] {bot.user.name}#{bot.user.discriminator} -> {bot.user.id}')  # printing into the console some informations about the bot
 
 
 @bot.command(pass_context=True, name='help', aliases=['h'])
